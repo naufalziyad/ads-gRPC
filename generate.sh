@@ -1,0 +1,1 @@
+protoc  adspb/ads.proto --go_out=plugins=grpc:.
