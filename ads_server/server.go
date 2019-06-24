@@ -7,7 +7,6 @@ import (
 	"net"
 	"os"
 	"os/signal"
-	"time"
 
 	"../adspb"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -38,20 +37,20 @@ func main() {
 	//we can get the file name and line number problem error
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	fmt.Println("Welcome to Server Ads")
-
+	fmt.Println("Connecting to MongoDB")
 	//connect to mongodb
 	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
 	if err != nil {
 		log.Fatal(err)
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
-	defer cancel()
-	err = client.Connect(ctx)
+	//ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	//defer cancel()
+	err = client.Connect(context.TODO())
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	fmt.Println("Welcome to Ads Server \nNow Running Ads Server......")
 	collection = client.Database("mydb").Collection("ads")
 
 	lis, err := net.Listen("tcp", "0.0.0.0:50051")
