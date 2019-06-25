@@ -8,12 +8,15 @@ import (
 	"os"
 	"os/signal"
 
+	"google.golang.org/grpc/codes"
+
 	"../adspb"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/status"
 )
 
 var collection *mongo.Collection
@@ -30,6 +33,44 @@ type adsItem struct {
 	Email     string              `bson:"email"`
 	Phone     string              `bson:"phone"`
 	BannerURL string              `bson:"banner_url"`
+}
+
+func (*server) CreateAds(ctx context.Context, req *adspb.CreateAdsRequest) (*adspb.CreateAdsResponse, error) {
+
+	ads := req.GetAds()
+
+	data := adsItem{
+		UserID:    ads.GetUserId(),
+		Title:     ads.GetTitle(),
+		Content:   ads.GetContent(),
+		Address:   ads.GetAddress(),
+		Email:     ads.GetEmail(),
+		Phone:     ads.GetPhone(),
+		BannerURL: ads.GetBannerUrl(),
+	}
+
+	//this is for connect to mongodb
+	res, err := collection.InsertOne(context.Background(), data)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Internal; error: %v", err))
+	}
+	oid, ok := res.InsertedID.(*primitive.ObjectID)
+	if !ok {
+		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Cannot convert to OID: %v", err))
+	}
+
+	return &adspb.CreateAdsResponse{
+		Ads: &adspb.Ads{
+			Id:        oid.Hex(),
+			UserId:    ads.GetUserId(),
+			Title:     ads.GetTitle(),
+			Content:   ads.GetContent(),
+			Address:   ads.GetAddress(),
+			Email:     ads.GetEmail(),
+			Phone:     ads.GetPhone(),
+			BannerUrl: ads.GetBannerUrl(),
+		},
+	}, nil
 }
 
 func main() {
