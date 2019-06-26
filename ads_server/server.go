@@ -54,9 +54,12 @@ func (*server) CreateAds(ctx context.Context, req *adspb.CreateAdsRequest) (*ads
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Internal; error: %v", err))
 	}
-	oid, ok := res.InsertedID.(*primitive.ObjectID)
+	oid, ok := res.InsertedID.(primitive.ObjectID)
 	if !ok {
-		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Cannot convert to OID: %v", err))
+		return nil, status.Errorf(
+			codes.Internal,
+			fmt.Sprintf("Cannot convert to OID"),
+		)
 	}
 
 	return &adspb.CreateAdsResponse{
