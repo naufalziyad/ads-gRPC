@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc/codes"
 
 	"../adspb"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -74,6 +75,43 @@ func (*server) CreateAds(ctx context.Context, req *adspb.CreateAdsRequest) (*ads
 			BannerUrl: ads.GetBannerUrl(),
 		},
 	}, nil
+}
+
+func (*server) ReadAds(ctx context.Context, req *adspb.ReadAdsRequest) (*adspb.ReadAdsResponse, error) {
+	fmt.Println("Read Ads Request")
+
+	adsID := req.GetAdsId()
+	oid, err := primitive.ObjectIDFromHex(adsID)
+	if err != nil {
+		return nil, status.Errorf(
+			codes.InvalidArgument,
+			fmt.Sprintf("Cannot Parse ID"),
+		)
+	}
+
+	//create an empty struct
+	data := &adsItem{}
+	filter := bson.M{"_id": oid}
+
+	res := collection.FindOne(context.Background(), filter)
+	if err := res.Decode(data); err != nil {
+		return nil, status.Errorf(
+			codes.NotFound,
+			fmt.Sprintf("Cannot find ads with specified ID"))
+	}
+	return &adspb.ReadAdsResponse{
+		Ads: &adspb.Ads{
+			Id:        data.ID.Hex(),
+			UserId:    data.UserID,
+			Title:     data.Title,
+			Content:   data.Content,
+			Address:   data.Address,
+			Email:     data.Email,
+			Phone:     data.Phone,
+			BannerUrl: data.BannerURL,
+		},
+	}, nil
+
 }
 
 func main() {
