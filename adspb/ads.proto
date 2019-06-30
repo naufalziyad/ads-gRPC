@@ -1,6 +1,6 @@
 syntax= "proto3";
 
-package blog;
+package ads;
 
 option go_package = "adspb";
 
@@ -23,7 +23,16 @@ message CreateAdsResponse {
     Ads ads = 1;
 }
 
+message ReadAdsRequest {
+    string ads_id = 1;
+}
+
+message ReadAdsResponse {
+    Ads ads = 1;
+}
+
 service AdsService {
 rpc  CreateAds (CreateAdsRequest) returns (CreateAdsResponse);
+rpc ReadAds (ReadAdsRequest) returns (ReadAdsResponse);
     
 }
