@@ -38,5 +38,28 @@ func main() {
 	if err != nil {
 		log.Fatalf("unexepected error : %v", err)
 	}
-	fmt.Printf("Ads Successfull created ", createAdsRes)
+	fmt.Printf("\nADS Successfull created !\n")
+
+	//THIS SECTION FOR READ ADS FROM SERVER
+	adsID := createAdsRes.GetAds().GetId()
+
+	fmt.Println("Reading the Ads")
+	fmt.Println("-------------------")
+
+	/*
+		for static ads id
+		_, err2 := c.ReadAds(context.Background(), &adspb.ReadAdsRequest{AdsId: ""})
+		if err2 != nil {
+			fmt.Printf("Error while reading : %v \n", err2)
+		}
+	*/
+
+	readAdsReq := &adspb.ReadAdsRequest{AdsId: adsID}
+	readAdsRes, readAdsErr := c.ReadAds(context.Background(), readAdsReq)
+	if readAdsErr != nil {
+		fmt.Printf("Error while reading : %v \n", readAdsErr)
+	}
+
+	fmt.Printf("ADS was Read : %v \n", readAdsRes)
+
 }
