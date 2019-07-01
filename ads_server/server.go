@@ -7,6 +7,7 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"time"
 
 	"google.golang.org/grpc/codes"
 
@@ -62,7 +63,7 @@ func (*server) CreateAds(ctx context.Context, req *adspb.CreateAdsRequest) (*ads
 			fmt.Sprintf("Cannot convert to OID"),
 		)
 	}
-
+	fmt.Println("Create Ads Request Success at :", time.Now())
 	return &adspb.CreateAdsResponse{
 		Ads: &adspb.Ads{
 			Id:        oid.Hex(),
