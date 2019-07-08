@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"../adspb"
+	"github.com/naufalziyad/ads-gRPC/adspb"
 
 	"google.golang.org/grpc"
 )

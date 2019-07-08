@@ -11,7 +11,7 @@ import (
 
 	"google.golang.org/grpc/codes"
 
-	"../adspb"
+	"github.com/naufalziyad/ads-gRPC/adspb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
